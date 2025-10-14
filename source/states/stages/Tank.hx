@@ -86,7 +86,8 @@ class Tank extends BaseStage
 		if(!ClientPrefs.data.lowQuality) foregroundSprites.add(new BGSprite('tank4', 1300, 900, 1.5, 1.5, ['fg']));
 		foregroundSprites.add(new BGSprite('tank5', 1620, 700, 1.5, 1.5, ['fg']));
 		if(!ClientPrefs.data.lowQuality) foregroundSprites.add(new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']));
-		stageVars.set("foregroundSprites", foregroundSprites);
+
+		//stageVars.set("foregroundSprites", foregroundSprites);
 
 		// Default GFs
 		if(songName == 'stress') setDefaultGF('pico-speaker');
@@ -438,5 +439,14 @@ class Tank extends BaseStage
 				spr.y -= 100;
 			});
 		}
+	}
+
+	override public function destroy():Void {
+		if (foregroundSprites != null) { // fuck u <3.
+			remove(foregroundSprites);
+			foregroundSprites.destroy();
+			foregroundSprites = null;
+		}
+		super.destroy();
 	}
 }
