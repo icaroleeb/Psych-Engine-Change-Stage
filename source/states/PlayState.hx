@@ -357,14 +357,14 @@ class PlayState extends MusicBeatState
 		add(luaDebugGroup);
 		#end
 
-		if (!stageData.hide_girlfriend)
-		{
+		//if (!stageData.hide_girlfriend)
+		//{
 			if(SONG.gfVersion == null || SONG.gfVersion.length < 1) SONG.gfVersion = 'gf'; //Fix for the Chart Editor
 			gf = new Character(0, 0, SONG.gfVersion);
 			startCharacterPos(gf);
 			gfGroup.scrollFactor.set(0.95, 0.95);
 			gfGroup.add(gf);
-		}
+		//}
 
 		dad = new Character(0, 0, SONG.player2);
 		startCharacterPos(dad, true);
@@ -3760,7 +3760,7 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			add(gfGroup);
+			if(!stageData.hide_girlfriend) add(gfGroup);
 			add(dadGroup);
 			add(boyfriendGroup);
 		}
@@ -3820,8 +3820,11 @@ class PlayState extends MusicBeatState
 		boyfriendGroup.y = BF_Y;
 		dadGroup.x = DAD_X;
 		dadGroup.y = DAD_Y;
-		gfGroup.x = GF_X;
-		gfGroup.y = GF_Y;
+
+		if(!stageData.hide_girlfriend){
+			gfGroup.x = GF_X;
+			gfGroup.y = GF_Y;
+		}
 
 		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
 			// STAGE SCRIPTS
