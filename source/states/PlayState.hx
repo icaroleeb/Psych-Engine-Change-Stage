@@ -468,6 +468,7 @@ class PlayState extends MusicBeatState
 		}
 
 		generateSong();
+		preloadStage();
 
 		noteGroup.add(grpNoteSplashes);
 
@@ -1421,6 +1422,35 @@ class PlayState extends MusicBeatState
 		generatedMusic = true;
 	}
 
+	public var stagesToLoad:Array<String> = [];
+
+	private function preloadStage():Void
+	{
+		if (stagesToLoad.length > 1) stagesToLoad = CoolUtil.removeDupe(stagesToLoad);
+		
+		var stagesPreloaded:Bool = false; // because this is looping for some reason?
+
+		for(stage in stagesToLoad){ // loading stages without the multithread because it didn't worked that well with it
+		var ogStage:String =  "";
+		if (curStage != null) ogStage = curStage;
+			if (!stagesPreloaded) {
+				for (stage in stagesToLoad) {
+					removeStage();
+					curStage = stage;
+					stageData = StageData.getStageFile(curStage); 
+					addStage(true);
+					trace('Stage Loaded: ' + stage + '!');
+				}
+				removeStage();
+				curStage = ogStage;
+				stageData = StageData.getStageFile(curStage); 
+				addStage(true);
+				stagesPreloaded = true;
+				trace('Stage Preloading Finished.');
+			}
+		}
+	}
+
 	// called only once per different event (Used for precaching)
 	function eventPushed(event:EventNote) {
 		eventPushedUnique(event);
@@ -1453,6 +1483,8 @@ class PlayState extends MusicBeatState
 
 			case 'Play Sound':
 				Paths.sound(event.value1); //Precache sound
+			case "Change Stage":
+				stagesToLoad.push(event.value1); // stage preloading
 		}
 		stagesFunc(function(stage:BaseStage) stage.eventPushedUnique(event));
 	}
@@ -3782,7 +3814,14 @@ class PlayState extends MusicBeatState
 			case 'phillyblazin': hardCodedStage = new PhillyBlazin();	//Weekend 1 - Blazin
 		}
 
-		if(!isCreate) addObjects(stageData);
+		addObjects(stageData);
+
+		boyfriendGroup.x = BF_X;
+		boyfriendGroup.y = BF_Y;
+		dadGroup.x = DAD_X;
+		dadGroup.y = DAD_Y;
+		gfGroup.x = GF_X;
+		gfGroup.y = GF_Y;
 
 		#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
 			// STAGE SCRIPTS

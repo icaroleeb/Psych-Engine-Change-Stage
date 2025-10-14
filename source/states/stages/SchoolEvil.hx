@@ -36,17 +36,20 @@ class SchoolEvil extends BaseStage
 		add(bg);
 		setDefaultGF('gf-pixel');
 
-		FlxG.sound.playMusic(Paths.music('LunchboxScary'), 0);
-		FlxG.sound.music.fadeIn(1, 0, 0.8);
-		if(isStoryMode && !seenCutscene)
-		{
-			initDoof();
-			setStartCallback(schoolIntro);
+		if (PlayState.instance.startingSong){
+			FlxG.sound.playMusic(Paths.music('LunchboxScary'), 0);
+			FlxG.sound.music.fadeIn(1, 0, 0.8);
+			if(isStoryMode && !seenCutscene)
+			{
+				initDoof();
+				setStartCallback(schoolIntro);
+			}
 		}
 	}
 	override function createPost()
 	{
 		var trail:FlxTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069);
+		PlayState.instance.variables.get("stageVariables").set("trail", trail);
 		addBehindDad(trail);
 	}
 

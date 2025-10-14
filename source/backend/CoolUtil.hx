@@ -180,4 +180,16 @@ class CoolUtil
 				text.borderStyle = NONE;
 		}
 	}
+
+	public static  function removeDupe(arr:Array<String>):Array<String> {
+		var result:Array<String> = [];
+		for (item in arr) {
+			if (!result.contains(item)) {
+				result.push(item);
+			} else {
+				trace('heh. just removed a dupe of ${item}. no need to thank me');
+			}
+		}
+		return result;
+	}
 }
