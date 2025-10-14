@@ -1424,7 +1424,7 @@ class PlayState extends MusicBeatState
 
 	public var stagesToLoad:Array<String> = [];
 
-	private function preloadStage():Void
+	function preloadStage():Void
 	{
 		if (stagesToLoad.length > 1) stagesToLoad = CoolUtil.removeDupe(stagesToLoad);
 		
