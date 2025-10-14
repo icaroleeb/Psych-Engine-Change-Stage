@@ -6,16 +6,25 @@ class MallEvil extends BaseStage
 {
 	override function create()
 	{
+		if (!PlayState.instance.variables.exists("stageVariables")){
+			PlayState.instance.variables.set("stageVariables", new Map<String, FlxSprite>());
+		}
+		var stageVars = PlayState.instance.variables.get("stageVariables");
+		
 		var bg:BGSprite = new BGSprite('christmas/evilBG', -400, -500, 0.2, 0.2);
 		bg.setGraphicSize(Std.int(bg.width * 0.8));
 		bg.updateHitbox();
+		stageVars.set("bg", bg);
 		add(bg);
 
 		var evilTree:BGSprite = new BGSprite('christmas/evilTree', 300, -300, 0.2, 0.2);
+		stageVars.set("evilTree", evilTree);
 		add(evilTree);
 
 		var evilSnow:BGSprite = new BGSprite('christmas/evilSnow', -200, 700);
+		stageVars.set("evilSnow", evilSnow);
 		add(evilSnow);
+
 		setDefaultGF('gf-christmas');
 		
 		//Winter Horrorland cutscene
@@ -41,6 +50,7 @@ class MallEvil extends BaseStage
 		// blackout at the start
 		var blackScreen:FlxSprite = new FlxSprite().makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
 		blackScreen.scrollFactor.set();
+		PlayState.instance.variables.get("stageVariables").set("blackScreen", blackScreen);
 		add(blackScreen);
 
 		FlxTween.tween(blackScreen, {alpha: 0}, 0.7, {

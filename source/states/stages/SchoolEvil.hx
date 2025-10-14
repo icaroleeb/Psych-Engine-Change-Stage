@@ -10,6 +10,11 @@ class SchoolEvil extends BaseStage
 {
 	override function create()
 	{
+		if (!PlayState.instance.variables.exists("stageVariables")){
+			PlayState.instance.variables.set("stageVariables", new Map<String, FlxSprite>());
+		}
+		var stageVars = PlayState.instance.variables.get("stageVariables");
+
 		var _song = PlayState.SONG;
 		if(_song.gameOverSound == null || _song.gameOverSound.trim().length < 1) GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pixel';
 		if(_song.gameOverLoop == null || _song.gameOverLoop.trim().length < 1) GameOverSubstate.loopSoundName = 'gameOver-pixel';
@@ -27,6 +32,7 @@ class SchoolEvil extends BaseStage
 
 		bg.scale.set(PlayState.daPixelZoom, PlayState.daPixelZoom);
 		bg.antialiasing = false;
+		stageVars.set("bg", bg);
 		add(bg);
 		setDefaultGF('gf-pixel');
 
@@ -117,6 +123,7 @@ class SchoolEvil extends BaseStage
 		inCutscene = true;
 		var red:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFFff1b31);
 		red.scrollFactor.set();
+		PlayState.instance.variables.get("stageVariables").set("red", red);
 		add(red);
 
 		var senpaiEvil:FlxSprite = new FlxSprite();
@@ -128,6 +135,7 @@ class SchoolEvil extends BaseStage
 		senpaiEvil.screenCenter();
 		senpaiEvil.x += 300;
 		camHUD.visible = false;
+		PlayState.instance.variables.get("stageVariables").set("senpaiEvil", senpaiEvil);
 
 		new FlxTimer().start(2.1, function(tmr:FlxTimer)
 		{

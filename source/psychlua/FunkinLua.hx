@@ -47,6 +47,7 @@ class FunkinLua {
 	public var lua:State = null;
 	public var camTarget:FlxCamera;
 	public var scriptName:String = '';
+	public var scriptType:String = '';
 	public var modFolder:String = null;
 	public var closed:Bool = false;
 
@@ -57,7 +58,7 @@ class FunkinLua {
 	public var callbacks:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public static var customFunctions:Map<String, Dynamic> = new Map<String, Dynamic>();
 
-	public function new(scriptName:String) {
+	public function new(scriptName:String, ?scriptType:String = "") {
 		lua = LuaL.newstate();
 		LuaL.openlibs(lua);
 
@@ -67,6 +68,8 @@ class FunkinLua {
 		//LuaL.dostring(lua, CLENSE);
 
 		this.scriptName = scriptName.trim();
+		this.scriptType = scriptType.trim();
+
 		var game:PlayState = PlayState.instance;
 		if(game != null) game.luaArray.push(this);
 
@@ -942,7 +945,20 @@ class FunkinLua {
 			{
 				leSprite.loadGraphic(Paths.image(image));
 			}
-			MusicBeatState.getVariables().set(tag, leSprite);
+
+			var variables = MusicBeatState.getVariables();
+			variables.set(tag, leSprite);
+
+			switch(scriptType.toLowerCase()){
+				case "stage":
+					if (!variables.exists("stageVariables")){
+						variables.set("stageVariables", new Map<String, FlxSprite>());
+					}
+		
+					var stageVars = variables.get("stageVariables");
+					stageVars.set(tag, leSprite);
+			}
+			
 			leSprite.active = true;
 		});
 		Lua_helper.add_callback(lua, "makeAnimatedLuaSprite", function(tag:String, ?image:String = null, ?x:Float = 0, ?y:Float = 0, ?spriteType:String = 'auto') {
@@ -954,7 +970,19 @@ class FunkinLua {
 			{
 				LuaUtils.loadFrames(leSprite, image, spriteType);
 			}
-			MusicBeatState.getVariables().set(tag, leSprite);
+			
+			var variables = MusicBeatState.getVariables();
+			variables.set(tag, leSprite);
+
+			switch(scriptType.toLowerCase()){
+				case "stage":
+					if (!variables.exists("stageVariables")){
+						variables.set("stageVariables", new Map<String, FlxSprite>());
+					}
+		
+					var stageVars = variables.get("stageVariables");
+					stageVars.set(tag, leSprite);
+			}
 		});
 
 		Lua_helper.add_callback(lua, "makeGraphic", function(obj:String, width:Int = 256, height:Int = 256, color:String = 'FFFFFF') {

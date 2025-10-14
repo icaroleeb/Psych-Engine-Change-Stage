@@ -29,41 +29,56 @@ class Limo extends BaseStage
 
 	override function create()
 	{
+		if (!PlayState.instance.variables.exists("stageVariables")){
+			PlayState.instance.variables.set("stageVariables", new Map<String, FlxSprite>());
+		}
+		var stageVars = PlayState.instance.variables.get("stageVariables");
+
 		var skyBG:BGSprite = new BGSprite('limo/limoSunset', -120, -50, 0.1, 0.1);
+		stageVars.set("skyBG", skyBG);
 		add(skyBG);
 
 		if(!ClientPrefs.data.lowQuality) {
 			limoMetalPole = new BGSprite('gore/metalPole', -500, 220, 0.4, 0.4);
+			stageVars.set("limoMetalPole", limoMetalPole);
 			add(limoMetalPole);
 
 			bgLimo = new BGSprite('limo/bgLimo', -150, 480, 0.4, 0.4, ['background limo pink'], true);
+			stageVars.set("bgLimo", bgLimo);
 			add(bgLimo);
 
 			limoCorpse = new BGSprite('gore/noooooo', -500, limoMetalPole.y - 130, 0.4, 0.4, ['Henchmen on rail'], true);
+			stageVars.set("limoCorpse", limoCorpse);
 			add(limoCorpse);
 
 			limoCorpseTwo = new BGSprite('gore/noooooo', -500, limoMetalPole.y, 0.4, 0.4, ['henchmen death'], true);
+			stageVars.set("limoCorpseTwo", limoCorpseTwo);
 			add(limoCorpseTwo);
 
 			grpLimoDancers = new FlxTypedGroup<BackgroundDancer>();
+			stageVars.set("grpLimoDancers", grpLimoDancers);
 			add(grpLimoDancers);
 
 			for (i in 0...5)
 			{
 				var dancer:BackgroundDancer = new BackgroundDancer((370 * i) + dancersDiff + bgLimo.x, bgLimo.y - 400);
 				dancer.scrollFactor.set(0.4, 0.4);
+				stageVars.set("dancer" + i, dancer);
 				grpLimoDancers.add(dancer);
 			}
 
 			limoLight = new BGSprite('gore/coldHeartKiller', limoMetalPole.x - 180, limoMetalPole.y - 80, 0.4, 0.4);
+			stageVars.set("limoLight", limoLight);
 			add(limoLight);
 
 			grpLimoParticles = new FlxTypedGroup<BGSprite>();
+			stageVars.set("grpLimoParticles", grpLimoParticles);
 			add(grpLimoParticles);
 
 			//PRECACHE BLOOD
 			var particle:BGSprite = new BGSprite('gore/stupidBlood', -400, -400, 0.4, 0.4, ['blood'], false);
 			particle.alpha = 0.01;
+			stageVars.set("particle", particle);
 			grpLimoParticles.add(particle);
 			resetLimoKill();
 
@@ -73,15 +88,27 @@ class Limo extends BaseStage
 		}
 
 		fastCar = new BGSprite('limo/fastCarLol', -300, 160);
+		stageVars.set("fastCar", fastCar);
 		fastCar.active = true;
 	}
+
 	override function createPost()
 	{
 		resetFastCar();
 		addBehindGF(fastCar);
 		
 		var limo:BGSprite = new BGSprite('limo/limoDrive', -120, 550, 1, 1, ['Limo stage'], true);
-		addBehindGF(limo); //Shitty layering but whatev it works LOL
+		PlayState.instance.variables.get("stageVariables").set("limo", limo);
+		addBehindDad(limo); //Shitty layering but whatev it works LOL
+	}
+
+	override public function destroy():Void {
+		if (grpLimoDancers != null) { // fuck u <3.
+			remove(grpLimoDancers);
+			grpLimoDancers.destroy();
+			grpLimoDancers = null;
+		}
+		super.destroy();
 	}
 
 	var limoSpeed:Float = 0;

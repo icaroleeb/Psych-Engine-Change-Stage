@@ -1,5 +1,6 @@
 package states.stages;
 
+import openfl.filters.BitmapFilter;
 import openfl.filters.ShaderFilter;
 import shaders.RainShader;
 
@@ -47,6 +48,11 @@ class PhillyStreets extends BaseStage
 	var abot:ABotSpeaker;
 	override function create()
 	{
+		if (!PlayState.instance.variables.exists("stageVariables")){
+			PlayState.instance.variables.set("stageVariables", new Map<String, FlxSprite>());
+		}
+		var stageVars = PlayState.instance.variables.get("stageVariables");
+
 		if(!ClientPrefs.data.lowQuality)
 		{
 			var skyImage = Paths.image('phillyStreets/phillySkybox');
@@ -55,23 +61,28 @@ class PhillyStreets extends BaseStage
 			scrollingSky.setPosition(-650, -375);
 			scrollingSky.scrollFactor.set(0.1, 0.1);
 			scrollingSky.scale.set(0.65, 0.65);
+			stageVars.set("scrollingSky", scrollingSky);
 			add(scrollingSky);
 			darkenable.push(scrollingSky);
 		
 			var phillySkyline:BGSprite = new BGSprite('phillyStreets/phillySkyline', -545, -273, 0.2, 0.2);
+			stageVars.set("phillySkyline", phillySkyline);
 			add(phillySkyline);
 			darkenable.push(phillySkyline);
 
 			var phillyForegroundCity:BGSprite = new BGSprite('phillyStreets/phillyForegroundCity', 625, 94, 0.3, 0.3);
+			stageVars.set("phillyForegroundCity", phillyForegroundCity);
 			add(phillyForegroundCity);
 			darkenable.push(phillyForegroundCity);
 		}
 
 		var phillyConstruction:BGSprite = new BGSprite('phillyStreets/phillyConstruction', 1800, 364, 0.7, 1);
+		stageVars.set("phillyConstruction", phillyConstruction);
 		add(phillyConstruction);
 		darkenable.push(phillyConstruction);
 
 		var phillyHighwayLights:BGSprite = new BGSprite('phillyStreets/phillyHighwayLights', 284, 305, 1, 1);
+		stageVars.set("phillyHighwayLights", phillyHighwayLights);
 		add(phillyHighwayLights);
 		darkenable.push(phillyHighwayLights);
 
@@ -80,17 +91,20 @@ class PhillyStreets extends BaseStage
 			var phillyHighwayLightsLightmap:BGSprite = new BGSprite('phillyStreets/phillyHighwayLights_lightmap', 284, 305, 1, 1);
 			phillyHighwayLightsLightmap.blend = ADD;
 			phillyHighwayLightsLightmap.alpha = 0.6;
+			stageVars.set("phillyHighwayLightsLightmap", phillyHighwayLightsLightmap);
 			add(phillyHighwayLightsLightmap);
 			darkenable.push(phillyHighwayLightsLightmap);
 		}
 
 		var phillyHighway:BGSprite = new BGSprite('phillyStreets/phillyHighway', 139, 209, 1, 1);
+		stageVars.set("phillyHighway", phillyHighway);
 		add(phillyHighway);
 		darkenable.push(phillyHighway);
 
 		if(!ClientPrefs.data.lowQuality)
 		{
 			var phillySmog:BGSprite = new BGSprite('phillyStreets/phillySmog', -6, 245, 0.8, 1);
+			stageVars.set("phillySmog", phillySmog);
 			add(phillySmog);
 			darkenable.push(phillySmog);
 
@@ -101,24 +115,30 @@ class PhillyStreets extends BaseStage
 				switch(i)
 				{
 					case 0: phillyCars = car;
+					stageVars.set('phillyCars', car);
+
 					case 1: phillyCars2 = car;
+					stageVars.set('phillyCars2', car);
 				}
 				darkenable.push(car);
 			}
 			phillyCars2.flipX = true;
 
 			phillyTraffic = new BGSprite('phillyStreets/phillyTraffic', 1840, 608, 0.9, 1, ['redtogreen', 'greentored'], false);
+			stageVars.set("phillyTraffic", phillyTraffic);
 			add(phillyTraffic);
 			darkenable.push(phillyTraffic);
 
 			var phillyTrafficLightmap:BGSprite = new BGSprite('phillyStreets/phillyTraffic_lightmap', 1840, 608, 0.9, 1);
 			phillyTrafficLightmap.blend = ADD;
 			phillyTrafficLightmap.alpha = 0.6;
+			stageVars.set("phillyTrafficLightmap", phillyTrafficLightmap);
 			add(phillyTrafficLightmap);
 			darkenable.push(phillyTrafficLightmap);
 		}
 
 		var phillyForeground:BGSprite = new BGSprite('phillyStreets/phillyForeground', 88, 317, 1, 1);
+		stageVars.set("phillyForeground", phillyForeground);
 		add(phillyForeground);
 		darkenable.push(phillyForeground);
 		
@@ -127,12 +147,14 @@ class PhillyStreets extends BaseStage
 			picoFade = new FlxSprite();
 			picoFade.antialiasing = ClientPrefs.data.antialiasing;
 			picoFade.alpha = 0;
+			stageVars.set("picoFade", picoFade);
 			add(picoFade);
 			darkenable.push(picoFade);
 		}
 
 		abot = new ABotSpeaker(gfGroup.x, gfGroup.y + 550);
 		updateABotEye(true);
+		stageVars.set("abot", abot);
 		add(abot);
 		
 		if(ClientPrefs.data.shaders)
@@ -185,6 +207,7 @@ class PhillyStreets extends BaseStage
 
 		spraycanPile = new BGSprite('SpraycanPile', 920, 1045, 1, 1);
 		precache();
+		PlayState.instance.variables.get("stageVariables").set("spraycanPile", spraycanPile);
 		add(spraycanPile);
 		darkenable.push(spraycanPile);
 
@@ -205,6 +228,19 @@ class PhillyStreets extends BaseStage
 				}
 			}
 		}
+	}
+
+	override public function destroy():Void {
+		if (PlayState.instance.camGame.filters != null) {
+			var filters = PlayState.instance.camGame.filters;
+
+			filters = filters.filter(function(f:BitmapFilter) {
+				var shaderF = Std.downcast(f, ShaderFilter);
+				return shaderF == null || shaderF.shader != rainShader;
+			});
+			PlayState.instance.camGame.filters = filters;
+		}
+		super.destroy();
 	}
 
 	var videoEnded:Bool = false;
@@ -436,6 +472,7 @@ class PhillyStreets extends BaseStage
 		{
 			if(didCreateCan) return;
 			spraycan = new SpraycanAtlasSprite(spraycanPile.x + 530, spraycanPile.y - 240);
+			PlayState.instance.variables.get("stageVariables").set("spraycan", spraycan);
 			add(spraycan);
 
 			lightCanSnd = new FlxSound();
@@ -515,7 +552,17 @@ class PhillyStreets extends BaseStage
 				rainShaderEndIntensity = 0.4;
 		}
 		rainShader.intensity = rainShaderStartIntensity;
-		FlxG.camera.setFilters([new ShaderFilter(rainShader)]);
+
+		var filters = [];
+
+		if (PlayState.instance.camGame.filters != null){
+			filters = PlayState.instance.camGame.filters;
+		}
+
+		filters.push(new ShaderFilter(rainShader));
+		PlayState.instance.camGame.setFilters(filters);
+
+		// FlxG.camera.setFilters([new ShaderFilter(rainShader)]);
 	}
 	
 	var currentNeneState:NeneState = STATE_DEFAULT;
@@ -882,6 +929,7 @@ class PhillyStreets extends BaseStage
 				casing.animation.callback = null; // Save performance.
 			}
 		};
+		PlayState.instance.variables.get("stageVariables").set('casing', casing);
 		casingGroup.add(casing);
 	}
 

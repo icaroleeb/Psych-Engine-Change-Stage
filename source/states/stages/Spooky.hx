@@ -6,11 +6,17 @@ class Spooky extends BaseStage
 	var halloweenWhite:BGSprite;
 	override function create()
 	{
+		if (!PlayState.instance.variables.exists("stageVariables")){
+			PlayState.instance.variables.set("stageVariables", new Map<String, FlxSprite>());
+		}
+		var stageVars = PlayState.instance.variables.get("stageVariables");
+
 		if(!ClientPrefs.data.lowQuality) {
 			halloweenBG = new BGSprite('halloween_bg', -200, -100, ['halloweem bg0', 'halloweem bg lightning strike']);
 		} else {
 			halloweenBG = new BGSprite('halloween_bg_low', -200, -100);
 		}
+		stageVars.set("halloweenBG", halloweenBG);
 		add(halloweenBG);
 
 		//PRECACHE SOUNDS
@@ -33,6 +39,7 @@ class Spooky extends BaseStage
 		halloweenWhite.makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.WHITE);
 		halloweenWhite.alpha = 0;
 		halloweenWhite.blend = ADD;
+		PlayState.instance.variables.get("stageVariables").set("halloweenWhite", halloweenWhite);
 		add(halloweenWhite);
 	}
 
@@ -96,6 +103,7 @@ class Spooky extends BaseStage
 		var whiteScreen:FlxSprite = new FlxSprite().makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.WHITE);
 		whiteScreen.scrollFactor.set();
 		whiteScreen.blend = ADD;
+		PlayState.instance.variables.get("stageVariables").set("whiteScreen", whiteScreen);
 		add(whiteScreen);
 		FlxTween.tween(whiteScreen, {alpha: 0}, 1, {
 			startDelay: 0.1,
