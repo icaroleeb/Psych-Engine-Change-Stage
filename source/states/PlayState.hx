@@ -715,12 +715,16 @@ class PlayState extends MusicBeatState
 	{
 		var ogStage:String = curStage;
 
-		removeStage();
-		curStage = daStage;
-		stageData = StageData.getStageFile(curStage); 
-		addStage(true);
+		if (daStage == "phillystreets" || daStage == "phillyblazin"){
+			trace("bullshit that I'm gonna add weekend 1 stages to preload!");
+		}else{
+			removeStage();
+			curStage = daStage;
+			stageData = StageData.getStageFile(curStage); 
+			addStage(true);
+		}
 
-		
+		// back to current stage
 
 		removeStage();
 		curStage = ogStage;
