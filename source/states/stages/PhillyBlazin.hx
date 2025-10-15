@@ -42,12 +42,11 @@ class PhillyBlazin extends BaseStage
 
 		if(!ClientPrefs.data.lowQuality)
 		{
-			var skyImage = Paths.image('phillyBlazin/skyBlur');
-			scrollingSky = new FlxTiledSprite(skyImage, Std.int(skyImage.width * 1.1) + 475, Std.int(skyImage.height / 1.1), true, false);
+			scrollingSky = new FlxTiledSprite(Paths.image('phillyBlazin/skyBlur'), 4000, 495, true, false);
 			scrollingSky.antialiasing = ClientPrefs.data.antialiasing;
 			scrollingSky.setPosition(-500, -120);
 			scrollingSky.scrollFactor.set();
-			stageVars.set("scrollingSky", scrollingSky);
+			stageVars.set('scrollingSky', scrollingSky);
 			add(scrollingSky);
 
 			skyAdditive = new BGSprite('phillyBlazin/skyBlur', -600, -175, 0.0, 0.0);
@@ -88,7 +87,7 @@ class PhillyBlazin extends BaseStage
 		}
 
 		abot = new ABotSpeaker(gfGroup.x, gfGroup.y + 550);
-		stageVars.set("abot", abot);
+		stageVars.set('abot', abot);
 		add(abot);
 		
 		if(ClientPrefs.data.shaders)
